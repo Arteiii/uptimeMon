@@ -8,8 +8,10 @@ fastapi = "*"
 uvicorn = {extras = ["standard"], version = "*"}
 motor = "*"
 ping3 = "*"
+httpx = "*"
 
 [dev-packages]
+pytest = "*"
 
 [requires]
 python_version = "3.12"

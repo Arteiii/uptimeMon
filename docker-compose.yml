@@ -3,7 +3,7 @@ version: "3.8"
 services:
   frontend:
     build:
-      context: ./frontend
+      context: ./frontend  # Adjust this to your actual frontend directory
     ports:
       - "5000:5000"
     depends_on:
@@ -16,8 +16,8 @@ services:
       - "8000:8000"
     depends_on:
       - mongodb
-    environment:
-      - MONGO_URI=mongodb://mongodb:27017/uptimeDB # replace with whatever name you prefer
+    env_file:
+      - .env
 
   mongodb:
     image: mongo
