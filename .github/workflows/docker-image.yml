@@ -23,3 +23,5 @@ jobs:
         with:
           context: .
           push: true
+          tags: uptimemon/app:latest,uptimemon/app:1.0.0
+
