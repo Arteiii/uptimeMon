@@ -9,20 +9,24 @@
 	export const isOnline = writable<boolean>(false);
 
 	onMount(() => {
-		ping(ip, (status, online) => {
-			pingStatus.set(status);
-			isOnline.set(online);
-		});
+		// Add an event listener to update isOnline when the online status changes
+		const updateOnlineStatus = () => {
+			isOnline.set(navigator.onLine);
+		};
+
+		window.addEventListener('online', updateOnlineStatus);
+		window.addEventListener('offline', updateOnlineStatus);
+
+		// Initial check
+		updateOnlineStatus();
 	});
 
-	function ping(ip: string, callback: (status: string, online: boolean) => void) {
-		// Simulate a delay
-		setTimeout(() => {
-			const randomSuccess = Math.random() > 0.3; // 70% success rate
-			const status = randomSuccess ? 'Online' : 'Offline';
-			const online = randomSuccess;
-			callback(status, online);
-		}, 1000);
+	function pingIP() {
+		if (isOnline) {
+			pingStatus.set('Online');
+		} else {
+			pingStatus.set('Offline');
+		}
 	}
 </script>
 
