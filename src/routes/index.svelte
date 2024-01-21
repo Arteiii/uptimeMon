@@ -3,7 +3,7 @@
 </script>
 
 <script lang="ts">
-	import HostEntry from '../components/HostEntry.svelte';
+	import HostEntry from '$components/HostEntry.svelte';
 	import { onMount } from 'svelte';
 
 	const entries = writable<{ ip: string; hostname: string }[]>([]);
