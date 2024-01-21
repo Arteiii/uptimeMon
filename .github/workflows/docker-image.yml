@@ -8,7 +8,7 @@ on:
 
   # This creates an environment variable called `IMAGE_NAME ` with the value `ghtoken_product_demo`.
 env:
-  IMAGE_NAME: uptimeMon
+  IMAGE_NAME: uptime_mon
 #
 jobs:
   # This pushes the image to GitHub Packages.
