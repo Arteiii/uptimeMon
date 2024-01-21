@@ -51,12 +51,14 @@
 
 {#if $isPopupVisible}
 	<div class="overlay" on:click={closePopup}></div>
-	<div class="popup" on:drop={preventDefault} on:dragover={preventDefault}>
+	<div class="popup">
 		<h2 class="mb-4">Drag and Drop Files or Paste Text</h2>
 		<div
-			on:paste={handleClipboardPaste}
-			contenteditable="true"
-			class="mb-4 p-2 border border-gray-300"
+			role="button"
+			aria-label="Drop area for files"
+			class="drop-area mb-4 p-2 border border-gray-300"
+			on:drop={preventDefault}
+			on:dragover={preventDefault}
 		>
 			<p>Paste text here...</p>
 		</div>
@@ -65,9 +67,9 @@
 				<li>{file.name}</li>
 			{/each}
 		</ul>
-		<button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" on:click={closePopup}
-			>Close</button
-		>
+		<button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" on:click={closePopup}>
+			Close
+		</button>
 	</div>
 {/if}
 
@@ -78,5 +80,9 @@
 
 	.overlay {
 		@apply fixed top-0 left-0 w-full h-full bg-black opacity-50 z-40;
+	}
+
+	.drop-area {
+		@apply p-2 border border-gray-300;
 	}
 </style>
