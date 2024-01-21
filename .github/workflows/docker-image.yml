@@ -1,7 +1,7 @@
 name: Server Build & Push
 
 on:
-  release:
+  push:
     branches: [main]
 
 jobs:
