@@ -13,15 +13,19 @@ Make sure you have Docker installed on your machine. Follow the official Docker 
 ### Clone Repository
 
 ```bash
-git clone https://github.com/your-username/uptimeMon.git
+git clone https://github.com/Arteiii/uptimeMon.git
 cd uptimeMon
 ```
+
+**Note**: Docker Compose is required to run this project. If you don't have Docker Compose installed, you can download it [here](https://docs.docker.com/compose/install/).
 
 Run Docker Compose
 
 ```bash
-docker-compose up --build
+sudo docker-compose up --build
 ```
+
+For more information about Docker usage, check the [Docker Documentation](https://docs.docker.com/).
 
 This command sets up a MongoDB container and containers for the frontend and backend. The application will be available at <http://localhost:5000>.
 
