@@ -1,18 +1,35 @@
-# uptimeMon
 
-icons by: [iconify](https://iconify.design/docs/icon-components/svelte/)
+# Getting Started
 
-## Example data
+First, run the development server:
 
-```txt
-hostname1|111.168.1.1|222.168.1.2|192.168.1.3|text1|note1
-hostname2|111.168.1.4|222.168.1.5|192.168.1.6|text2|note2
-hostname3|111.168.1.7|222.168.1.8|192.168.1.9|text3|note3
-hostname4|111.168.1.10|222.168.1.11|192.168.1.12|text4|note4
-hostname5|111.168.1.13|222.168.1.14|192.168.1.15|text5|note5
-hostname6|111.168.1.16|222.168.1.17|192.168.1.18|text6|note6
-hostname7|111.168.1.19|222.168.1.20|192.168.1.21|text7|note7
-hostname8|111.168.1.22|222.168.1.23|192.168.1.24|text8|note8
-hostname9|111.168.1.25|222.168.1.26|192.168.1.27|text9|note9
-hostname10|111.168.1.28|222.168.1.29|192.168.1.30|text10|note10
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

@@ -2,13 +2,16 @@
 
 ## Overview
 
-UptimeMon is a web application that monitors the availability of specified hosts using ping requests. It consists of a frontend built with Vite and a backend powered by FastAPI. The monitoring results are stored in a MongoDB database.
+UptimeMon is a web application that monitors the availability of specified hosts using ping requests.  
+It consists of a frontend built with Vite and a backend powered by FastAPI.  
+The monitoring results are stored in a MongoDB database.  
 
 ## Getting Started
 
 ### Prerequisites
 
-Make sure you have Docker installed on your machine. Follow the official Docker installation guide: [Install Docker](https://docs.docker.com/engine/install/)
+Make sure you have Docker installed on your machine.  
+Follow the official Docker installation guide: [Install Docker](https://docs.docker.com/engine/install/)
 
 ### Clone Repository
 
@@ -45,7 +48,8 @@ MongoDB is used as the database to store monitoring results. The database is ini
 
 ## Usage
 
-Once the application is running, you can access the frontend at <http://localhost:5000>. The user interface allows you to specify hosts and view their ping status.
+Once the application is running, you can access the frontend at <http://localhost:5000>.  
+The user interface allows you to specify hosts and view their ping status.
 
 ## License
 
