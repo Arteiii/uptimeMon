@@ -3,8 +3,8 @@
 import { Inter } from "next/font/google";
 import { ThemeProvider, Button } from "@material-tailwind/react";
 
-import "./globals.css";
-import { Footer } from "../components/Footer";
+import "@styles/globals.css";
+import { Footer } from "@components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 export { ThemeProvider, Button };

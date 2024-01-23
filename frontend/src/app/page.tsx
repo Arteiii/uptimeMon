@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { TableComponent } from "../components/TableComponent";
+import { TableComponent } from "@components/TableComponent";
 
 function App() {
   return (
