@@ -1,23 +1,35 @@
 import asyncio
+import os
 from typing import List
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from motor.motor_asyncio import AsyncIOMotorClient
-from app.ping import PingUtility
 
+from app.ping import PingUtility
+from app.schemas import IPDocument
 
 app = FastAPI()
 
 mongo_uri = "mongodb://mongodb:27017"
-client = AsyncIOMotorClient(mongo_uri)
-db = client.pingdb
-ping_collection = db.pings
+db_name = "uptimedb"
 
-ip_config = {
-    "example_hostname1": "example_ip1",
-    "example_hostname2": "example_ip2",
-    # Add more hostnames and corresponding IPs as needed
-}
+
+# retrieve allowed origins from environment variable or provide default values
+origins_str = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://localhost,http://localhost:8080,http://localhost:8000,http://localhost:5000",
+)
+origins = [origin.strip() for origin in origins_str.split(",")]
+
+origins = []
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -27,20 +39,15 @@ async def read_root():
 
 @app.get("/ping/")
 async def ping_ip(ip: str):
-    ping = PingUtility(max_retries=3, retry_delay=2)
-    
+    ping = PingUtility()
+
     result = await ping.perform_ping(ip)
     print(result)
-    
-    return result
 
-@app.post("/collection")
-async def create_collection(ips: List[str]):
-    return {"status": "success"}
+    return result
 
 
 if __name__ == "__main__":
     import uvicorn
 
-    # start the uvicorn server when the script is run directly (dev only)
     uvicorn.run(app, host="0.0.0.0", port=8000)
