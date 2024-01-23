@@ -1,63 +1,39 @@
-"use client";
+import { Typography } from "@material-tailwind/react";
 
-import React, { useState } from "react";
-
-const Footer = () => {
-  // State to manage the theme mode
-  const [darkMode, setDarkMode] = useState(false);
-
-  // Toggle between dark and light mode
-  const toggleDarkMode = () => {
-    setDarkMode((prevMode) => !prevMode);
-  };
+export function Footer() {
+  const currentYear = new Date().getFullYear();
 
   return (
-    <footer
-      className={`p-4 text-center ${
-        darkMode ? "bg-gray-800" : "bg-white"
-      } text-${darkMode ? "white" : "black"}`}
-    >
-      <p className={`text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-        &copy; 2024 Your Company |{" "}
-        <a
-          href="https://www.yourwebsite.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`hover:text-blue-300 transition duration-300 ${
-            darkMode ? "text-blue-400" : "text-blue-700"
-          }`}
-        >
-          Website
-        </a>{" "}
-        |{" "}
-        <a
-          href="https://github.com/yourusername/your-repository"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`hover:text-blue-300 transition duration-300 ${
-            darkMode ? "text-blue-400" : "text-blue-700"
-          }`}
-        >
-          GitHub
-        </a>{" "}
-        |{" "}
-        <a
-          href="/license"
-          className={`hover:text-blue-300 transition duration-300 ${
-            darkMode ? "text-blue-400" : "text-blue-700"
-          }`}
-        >
-          License
-        </a>
-        {/* Add other relevant links here */}
-      </p>
-
-      {/* Dark mode toggle button */}
-      <button onClick={toggleDarkMode} className="mt-2">
-        {darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
-      </button>
+    <footer className="w-full bg-white p-8">
+      <div className="flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 bg-white text-center md:justify-between">
+        <img src="/logo.svg" alt="logo-ct" className="w-60" />
+        <ul className="flex flex-wrap items-center gap-y-2 gap-x-8">
+          <li>
+            <Typography
+              as="a"
+              href="https://github.com/Arteiii/uptimeMon?tab=Apache-2.0-1-ov-file#readme"
+              color="blue-gray"
+              className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
+            >
+              License
+            </Typography>
+          </li>
+          <li>
+            <Typography
+              as="a"
+              href="https://github.com/Arteiii/uptimeMon"
+              color="blue-gray"
+              className="font-normal transition-colors hover:text-blue-500 focus:text-blue-500"
+            >
+              Contribute
+            </Typography>
+          </li>
+        </ul>
+      </div>
+      <hr className="my-8 border-blue-gray-50" />
+      <Typography color="blue-gray" className="text-center font-normal">
+        &copy; {currentYear} Arteii. All rights reserved.
+      </Typography>
     </footer>
   );
-};
-
-export default Footer;
+}

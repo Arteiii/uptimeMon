@@ -1,10 +1,19 @@
 "use client";
 
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { useState, useEffect } from "react";
+
 import {
+  XCircleIcon,
+  ArrowPathIcon,
   ArrowDownTrayIcon,
+  ArrowDownOnSquareStackIcon,
+  PlusIcon,
   MagnifyingGlassIcon,
+  AdjustmentsHorizontalIcon,
+  ClockIcon,
+  CheckCircleIcon,
 } from "@heroicons/react/24/outline";
+
 import {
   Card,
   CardHeader,
@@ -19,81 +28,73 @@ import {
   Input,
 } from "@material-tailwind/react";
 
-const TABLE_HEAD = ["Transaction", "Amount", "Date", "Status", "Account", ""];
+const TABLE_HEAD = ["IP Address", "Hostname", "Last Pinged", "Status", ""];
 
 const TABLE_ROWS = [
   {
-    img: "https://docs.material-tailwind.com/img/logos/logo-spotify.svg",
-    name: "Spotify",
-    amount: "$2,500",
-    date: "Wed 3:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-amazon.svg",
-    name: "Amazon",
-    amount: "$5,000",
-    date: "Wed 1:00pm",
-    status: "paid",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-pinterest.svg",
-    name: "Pinterest",
-    amount: "$3,400",
-    date: "Mon 7:40pm",
-    status: "pending",
-    account: "master-card",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-google.svg",
-    name: "Google",
-    amount: "$1,000",
-    date: "Wed 5:00pm",
-    status: "paid",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
-  },
-  {
-    img: "https://docs.material-tailwind.com/img/logos/logo-netflix.svg",
-    name: "netflix",
-    amount: "$14,000",
-    date: "Wed 3:30am",
-    status: "cancelled",
-    account: "visa",
-    accountNumber: "1234",
-    expiry: "06/2026",
+    ip: "192.168.1.1",
+    hostname: "router",
+    lastPinged: new Date("2023-01-23T12:45:00"),
+    threshold: 500,
   },
 ];
 
 export function TableComponent() {
+  const [pingStatus, setPingStatus] = useState(TABLE_ROWS);
+  const [loading, setLoading] = useState(true);
+
+  const updatePingStatus = () => {
+    setLoading(true);
+
+    const intervalId = setInterval(() => {
+      const currentTime = new Date();
+
+      const updatedStatus = pingStatus.map((ping) => {
+        const responseTime = Math.floor(Math.random() * 1000);
+
+        let status;
+        if (responseTime < ping.threshold) {
+          status = "Online";
+        } else if (responseTime >= ping.threshold) {
+          status = "Exceeded Threshold";
+        } else {
+          status = "Offline";
+        }
+
+        setLoading(false);
+        return {
+          ...ping,
+          lastPinged: currentTime,
+          status,
+        };
+      });
+
+      setPingStatus(updatedStatus);
+      clearInterval(intervalId);
+    }, 2000);
+  };
+
+  const handleClickStatus = () => {
+    updatePingStatus();
+  };
+
+  useEffect(() => {
+    updatePingStatus();
+  }, []);
+
   return (
-    <Card className="h-full w-full">
+    <Card className="h-full w-full overflow-hidden">
+      {" "}
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
-          <div>
-            <Typography variant="h5" color="blue-gray">
-              Recent Transactions
-            </Typography>
-            <Typography color="gray" className="mt-1 font-normal">
-              These are details about the last transactions
-            </Typography>
-          </div>
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <div className="w-full md:w-72">
-              <Input
-                label="Search"
-                icon={<MagnifyingGlassIcon className="h-5 w-5" />}
-              />
-            </div>
+            <Button className="flex items-center gap-3" size="sm" color="green">
+              <PlusIcon strokeWidth={2} className="h-4 w-4" /> Add
+            </Button>
+            <Button className="flex items-center gap-3" size="sm" color="blue">
+              <ArrowDownOnSquareStackIcon strokeWidth={2} className="h-4 w-4" />{" "}
+              Import
+            </Button>
             <Button className="flex items-center gap-3" size="sm">
               <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
             </Button>
@@ -101,144 +102,136 @@ export function TableComponent() {
         </div>
       </CardHeader>
       <CardBody className="overflow-scroll px-0">
-        <table className="w-full min-w-max table-auto text-left">
-          <thead>
-            <tr>
-              {TABLE_HEAD.map((head) => (
-                <th
-                  key={head}
-                  className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
-                >
-                  <Typography
-                    variant="small"
-                    color="blue-gray"
-                    className="font-normal leading-none opacity-70"
+        <div className="overflow-x-hidden overflow-y-auto">
+          <table className="w-full table-auto text-left">
+            <colgroup>
+              {/* Set fixed widths for each column */}
+              <col className="w-1/4" /> {/* IP Address */}
+              <col className="w-1/4" /> {/* Hostname */}
+              <col className="w-1/4" /> {/* Last Pinged */}
+              <col className="w-1/4" /> {/* Status */}
+              <col className="w-1/4" /> {/* Edit Ping */}
+            </colgroup>
+            <thead>
+              <tr>
+                {TABLE_HEAD.map((head) => (
+                  <th
+                    key={head}
+                    className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
                   >
-                    {head}
-                  </Typography>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {TABLE_ROWS.map(
-              (
-                {
-                  img,
-                  name,
-                  amount,
-                  date,
-                  status,
-                  account,
-                  accountNumber,
-                  expiry,
-                },
-                index
-              ) => {
-                const isLast = index === TABLE_ROWS.length - 1;
+                    <Typography
+                      variant="small"
+                      color="blue-gray"
+                      className="font-normal leading-none opacity-70"
+                    >
+                      {head}
+                    </Typography>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {pingStatus.map(({ ip, hostname, lastPinged, status }, index) => {
+                const isLast = index === pingStatus.length - 1;
                 const classes = isLast
                   ? "p-4"
                   : "p-4 border-b border-blue-gray-50";
 
                 return (
-                  <tr key={name}>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        <Avatar
-                          src={img}
-                          alt={name}
-                          size="md"
-                          className="border border-blue-gray-50 bg-blue-gray-50/50 object-contain p-1"
-                        />
-                        <Typography
-                          variant="small"
-                          color="blue-gray"
-                          className="font-bold"
-                        >
-                          {name}
-                        </Typography>
-                      </div>
-                    </td>
-                    <td className={classes}>
+                  <tr key={ip}>
+                    <td className={`${classes} max-w-xs whitespace-nowrap`}>
+                      {/* Add max-w-xs and whitespace-nowrap */}
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {amount}
+                        {ip}
                       </Typography>
                     </td>
-                    <td className={classes}>
+                    <td className={`${classes} max-w-xs whitespace-nowrap`}>
+                      {/* Add max-w-xs and whitespace-nowrap */}
                       <Typography
                         variant="small"
                         color="blue-gray"
                         className="font-normal"
                       >
-                        {date}
+                        {hostname}
                       </Typography>
                     </td>
-                    <td className={classes}>
-                      <div className="w-max">
-                        <Chip
-                          size="sm"
-                          variant="ghost"
-                          value={status}
-                          color={
-                            status === "paid"
-                              ? "green"
-                              : status === "pending"
-                              ? "amber"
-                              : "red"
-                          }
-                        />
-                      </div>
+                    <td className={`${classes} max-w-xs whitespace-nowrap`}>
+                      {/* Add max-w-xs and whitespace-nowrap */}
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
+                        {lastPinged.toLocaleTimeString()}
+                      </Typography>
                     </td>
-                    <td className={classes}>
-                      <div className="flex items-center gap-3">
-                        <div className="h-9 w-12 rounded-md border border-blue-gray-50 p-1">
-                          <Avatar
-                            src={
-                              account === "visa"
-                                ? "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/visa.png"
-                                : "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/logos/mastercard.png"
-                            }
+                    <td className={`${classes} max-w-xs whitespace-nowrap`}>
+                      {/* Add max-w-xs and whitespace-nowrap */}
+                      <div className="flex items-center space-x-2">
+                        <div className="w-max relative">
+                          <Chip
                             size="sm"
-                            alt={account}
-                            variant="square"
-                            className="h-full w-full object-contain p-1"
+                            variant="filled"
+                            value={status || "Unknown"}
+                            color={
+                              status === "Online"
+                                ? "green"
+                                : status === "Exceeded Threshold"
+                                ? "yellow"
+                                : status === "Unknown"
+                                ? "gray"
+                                : "red"
+                            }
+                            className={`${loading ? "animate-pulse" : ""} ${
+                              status === "Unknown" ? "cursor-pointer" : ""
+                            }`}
+                            onClick={() => handleClickStatus()}
+                            icon={
+                              status === "Online" ? (
+                                <CheckCircleIcon className="h-4 w-4" />
+                              ) : status === "Exceeded Threshold" ? (
+                                <ClockIcon className="h-4 w-4" />
+                              ) : status === "Unknown" ? (
+                                loading ? (
+                                  <div className="h-4 w-4 border-t-2 border-blue-gray-500 border-solid rounded-full"></div>
+                                ) : (
+                                  <div className="animate-pulse">
+                                    {lastActiveStatus === "Online" ? (
+                                      <CheckCircleIcon className="h-4 w-4" />
+                                    ) : lastActiveStatus ===
+                                      "Exceeded Threshold" ? (
+                                      <ClockIcon className="h-4 w-4" />
+                                    ) : (
+                                      <XCircleIcon className="h-4 w-4" />
+                                    )}
+                                  </div>
+                                )
+                              ) : (
+                                <XCircleIcon className="h-4 w-4" />
+                              )
+                            }
                           />
                         </div>
-                        <div className="flex flex-col">
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal capitalize"
-                          >
-                            {account.split("-").join(" ")} {accountNumber}
-                          </Typography>
-                          <Typography
-                            variant="small"
-                            color="blue-gray"
-                            className="font-normal opacity-70"
-                          >
-                            {expiry}
-                          </Typography>
-                        </div>
                       </div>
                     </td>
-                    <td className={classes}>
-                      <Tooltip content="Edit User">
+                    <td className={`${classes} max-w-xs whitespace-nowrap`}>
+                      {/* Add max-w-xs and whitespace-nowrap */}
+                      <Tooltip content="Edit Ping">
                         <IconButton variant="text">
-                          <PencilIcon className="h-4 w-4" />
+                          <AdjustmentsHorizontalIcon />
                         </IconButton>
                       </Tooltip>
                     </td>
                   </tr>
                 );
-              }
-            )}
-          </tbody>
-        </table>
+              })}
+            </tbody>
+          </table>
+        </div>
       </CardBody>
       <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
         <Button variant="outlined" size="sm">
