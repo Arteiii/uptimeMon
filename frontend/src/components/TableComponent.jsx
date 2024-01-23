@@ -105,7 +105,6 @@ export function TableComponent() {
         <div className="overflow-x-hidden overflow-y-auto">
           <table className="w-full table-auto text-left">
             <colgroup>
-              {/* Set fixed widths for each column */}
               <col className="w-1/4" /> {/* IP Address */}
               <col className="w-1/4" /> {/* Hostname */}
               <col className="w-1/4" /> {/* Last Pinged */}
