@@ -1,16 +1,17 @@
-from typing import List, Optional
+from typing import Any, List, Optional
 from pydantic import BaseModel
 from datetime import datetime
 
 
 class PingResult(BaseModel):
     timestamp: datetime
-    response_time: Optional[float]
+    additional_data: Any
     status: str
     note: str
 
 
 class IPinfo(BaseModel):
+    name: str
     ip_address: str
     host_name: str
     note: str

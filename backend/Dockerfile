@@ -4,11 +4,11 @@ FROM python:3.12
 # Set the working directory inside the container
 WORKDIR /app
 
-# install pipenv
-RUN pip install pipenv
-
 # Copy the requirements file to the working directory
 COPY Pipfile .
+
+# install pipenv
+RUN pip install pipenv
 
 # Install the Python dependencies
 RUN pipenv install

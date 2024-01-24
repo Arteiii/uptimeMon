@@ -1,27 +1,32 @@
 import asyncio
 import os
 from typing import List
-from fastapi import FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from motor.motor_asyncio import AsyncIOMotorClient
+
 
 from app.ping import PingUtility
 from app.schemas import IPDocument
+from app.ip_manager import IPManager, IPinfo, IPDocument
+
+
+mongo_uri = os.environ.get("MONGO_URI", "mongodb://mongodb:27017/")
+
+database_name = os.environ.get("MONGO_NAME", "uptimeMon")
+
+
+# Create an instance of IPManager
+ip_manager = IPManager(mongo_uri, database_name)
+
+
+# Dependency to get the IPManager instance
+def get_ip_manager():
+    return ip_manager
+
 
 app = FastAPI()
-
-mongo_uri = "mongodb://mongodb:27017"
-db_name = "uptimedb"
-
-
-# retrieve allowed origins from environment variable or provide default values
-origins_str = os.environ.get(
-    "ALLOWED_ORIGINS",
-    "http://localhost,http://localhost:8080,http://localhost:8000,http://localhost:5000",
-)
-origins = [origin.strip() for origin in origins_str.split(",")]
-
-origins = []
 
 app.add_middleware(
     CORSMiddleware,
@@ -32,19 +37,57 @@ app.add_middleware(
 )
 
 
+async def startup_event():
+    # start the background task to ping ipüs once when the app starts
+    asyncio.create_task(ip_manager.ping_ips())
+
+
+@app.on_event("startup")
+async def startup():
+    await startup_event()
+
+
 @app.get("/")
 async def read_root():
     return {"Hello": "World"}
 
 
-@app.get("/ping/")
-async def ping_ip(ip: str):
-    ping = PingUtility()
+# @app.get("/ping/")
+# async def ping_ip(ip: str):
+#     ping = PingUtility()
 
-    result = await ping.perform_ping(ip)
-    print(result)
+#     result = await ping.perform_ping(ip)
+#     print(result)
 
+#     return result
+
+
+@app.post("/ips/", response_model=IPDocument)
+async def create_ip(ip_info: IPinfo, ip_manager: IPManager = Depends(get_ip_manager)):
+    result = await ip_manager.add_ip(**ip_info.dict())
     return result
+
+
+@app.get("/ips/", response_model=List[IPDocument])
+async def read_ips(ip_manager: IPManager = Depends(get_ip_manager)):
+    return await ip_manager.collection.find({}).to_list(None)
+
+
+@app.get("/ips/{ip_address}", response_model=IPDocument)
+async def read_ip(ip_address: str, ip_manager: IPManager = Depends(get_ip_manager)):
+    ip_document = await ip_manager.collection.find_one(
+        {"ip_info.ip_address": ip_address}
+    )
+    if ip_document:
+        return ip_document
+    else:
+        raise HTTPException(status_code=404, detail="IP not found")
+
+
+@app.delete("/ips/{ip_address}", response_model=dict)
+async def delete_ip(ip_address: str, ip_manager: IPManager = Depends(get_ip_manager)):
+    await ip_manager.remove_ip(ip_address)
+    return {"message": "IP deleted"}
 
 
 if __name__ == "__main__":

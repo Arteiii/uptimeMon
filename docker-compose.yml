@@ -6,9 +6,6 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      # args:
-      #   ENV_VARIABLE: ${ENV_VARIABLE}
-      #   NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
     restart: always
     ports:
       - 4000:3000
@@ -22,6 +19,9 @@ services:
       - mongodb
     env_file:
       - .env
+    environment:
+      MONGO_URI: "mongodb://mongodb:27017/"
+      MONGO_NAEM: "uptimeMon"
 
   mongodb:
     image: mongo
