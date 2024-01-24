@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime, timedelta
 import os
 from typing import List
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -52,16 +53,6 @@ async def read_root():
     return {"Hello": "World"}
 
 
-# @app.get("/ping/")
-# async def ping_ip(ip: str):
-#     ping = PingUtility()
-
-#     result = await ping.perform_ping(ip)
-#     print(result)
-
-#     return result
-
-
 @app.post("/ips/", response_model=IPDocument)
 async def create_ip(ip_info: IPinfo, ip_manager: IPManager = Depends(get_ip_manager)):
     result = await ip_manager.add_ip(**ip_info.dict())
@@ -82,6 +73,31 @@ async def read_ip(ip_address: str, ip_manager: IPManager = Depends(get_ip_manage
         return ip_document
     else:
         raise HTTPException(status_code=404, detail="IP not found")
+
+
+@app.get("/ips/all/{duration_in_hours}", response_model=List[IPDocument])
+async def read_all_ips(
+    duration_in_hours: str, ip_manager: IPManager = Depends(get_ip_manager)
+):
+    try:
+        duration_in_hours = int(duration_in_hours)
+    except ValueError:
+        raise HTTPException(
+            status_code=400, detail="Invalid duration_in_hours. Must be an integer."
+        )
+
+    all_documents = await ip_manager.collection.find().to_list(length=None)
+
+    for ip_document in all_documents:
+        # Filter out PingResult entries older than duration_in_hours
+        cutoff_time = datetime.utcnow() - timedelta(hours=duration_in_hours)
+        ip_document["pings"] = [
+            ping
+            for ping in ip_document.get("pings", [])
+            if ping["timestamp"] >= cutoff_time
+        ]
+
+    return all_documents
 
 
 @app.delete("/ips/{ip_address}", response_model=dict)

@@ -1,78 +1,61 @@
 "use client";
 
+import React from "react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+} from "recharts";
 
-import React, { useEffect, useRef } from "react";
-import Chart from "chart.js";
+export default function PingChart({ pingData }) {
+  // Assuming pingData has the same structure as the data you provided earlier
+  // If not, adjust this part accordingly
 
-const PingChart = ({ data }) => {
-  const chartRef = useRef(null);
-
-  useEffect(() => {
-    if (data && data.pings) {
-      const timestamps = data.pings.map((ping) => ping.timestamp);
-      const responseTimes = data.pings.map(
-        (ping) => ping.additional_data.response_time
-      );
-
-      const ctx = chartRef.current.getContext("2d");
-
-      new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: timestamps,
-          datasets: [
-            {
-              label: "Response Time",
-              data: responseTimes,
-              borderColor: "rgba(75, 192, 192, 1)",
-              borderWidth: 2,
-              pointBackgroundColor: "rgba(75, 192, 192, 1)",
-              pointRadius: 5,
-              fill: false,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            x: {
-              type: "time",
-              time: {
-                unit: "minute",
-                tooltipFormat: "ll HH:mm",
-              },
-            },
-            y: {
-              beginAtZero: true,
-              title: {
-                display: true,
-                text: "Response Time (ms)",
-              },
-            },
-          },
-          plugins: {
-            title: {
-              display: true,
-              text: data.ip_info.name,
-              font: {
-                size: 16,
-              },
-            },
-            subtitle: {
-              display: true,
-              text: data.ip_info.note,
-              font: {
-                size: 14,
-              },
-            },
-          },
-        },
-      });
-    }
-  }, [data]);
+  // Convert timestamps to a format compatible with Recharts
+  const formattedData = pingData.pings.map((ping) => ({
+    name: ping.timestamp,
+    duration: ping.additional_data.response_time,
+  }));
 
   return (
-    <canvas ref={chartRef} style={{ maxWidth: "600px", margin: "auto" }} />
-  );
-};
+    <div className="rounded-md border p-4 mb-4 bg-gray-100">
+      <h2 className="text-xl font-semibold mb-2 text-blue-700">
+        {pingData.ip_info.name}
+      </h2>
+      <p className="text-gray-600 mb-2">
+        IP Address: {pingData.ip_info.ip_address}
+      </p>
+      <p className="text-gray-600 mb-4">
+        Hostname: {pingData.ip_info.host_name}
+      </p>
 
-export default PingChart;
+      <LineChart
+        width={800} // Adjust the width based on your layout
+        height={400} // Adjust the height based on your layout
+        data={formattedData}
+        margin={{
+          top: 5,
+          right: 30,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Line
+          type="monotone"
+          dataKey="duration"
+          stroke="#2a69ac" // Adjusted line color
+          activeDot={{ r: 8 }}
+        />
+      </LineChart>
+    </div>
+  );
+}

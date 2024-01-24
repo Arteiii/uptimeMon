@@ -8,6 +8,7 @@ import {
 
 import "@styles/globals.css";
 import { Footer } from "@components/Footer";
+import { StickyNavbar } from "@components/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <TailwindThemeProvider>
       <html lang="en">
         <body className={inter.className}>
+          <StickyNavbar />
           {children}
           <Footer />
         </body>

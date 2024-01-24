@@ -34,9 +34,9 @@ This command sets up a MongoDB container and containers for the frontend and bac
 
 ## Components
 
-### Frontend (Vite)
+### Frontend (Next.js)
 
-The frontend is built with Vite, a fast web development build tool. It provides a user interface to view the ping status of specified hosts.
+The frontend is built with Next.js, a fast web development build tool. It provides a user interface to view the ping status of specified hosts.
 
 ### Backend (FastAPI)
 
