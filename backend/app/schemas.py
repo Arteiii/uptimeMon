@@ -22,7 +22,7 @@ class IPDocument(BaseModel):
     pings: List[PingResult] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
     @staticmethod
     def add_ping_result(ip_document, timestamp, response_time, status):

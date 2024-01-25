@@ -9,9 +9,12 @@ uvicorn = {extras = ["standard"], version = "*"}
 motor = "*"
 ping3 = "*"
 httpx = "*"
+python-dotenv = "*"
 
 [dev-packages]
+pytest-asyncio = "*"
 pytest = "*"
+pytest-cov = "*"
 
 [requires]
 python_version = "3.12"
