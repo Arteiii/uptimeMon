@@ -12,10 +12,6 @@ import {
 } from "recharts";
 
 export default function PingChart({ pingData }) {
-  // Assuming pingData has the same structure as the data you provided earlier
-  // If not, adjust this part accordingly
-
-  // Convert timestamps to a format compatible with Recharts
   const formattedData = pingData.pings.map((ping) => ({
     name: ping.timestamp,
     duration: ping.additional_data.response_time,
@@ -34,8 +30,8 @@ export default function PingChart({ pingData }) {
       </p>
 
       <LineChart
-        width={800} // Adjust the width based on your layout
-        height={400} // Adjust the height based on your layout
+        width={800}
+        height={400}
         data={formattedData}
         margin={{
           top: 5,
