@@ -7,7 +7,6 @@ import {
   XCircleIcon,
   ArrowPathIcon,
   TrashIcon,
-  ArrowDownTrayIcon,
   ArrowDownOnSquareStackIcon,
   PlusIcon,
   ClockIcon,

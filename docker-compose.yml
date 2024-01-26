@@ -5,12 +5,22 @@ services:
     container_name: next-app
     build:
       context: ./frontend
+<<<<<<< HEAD
       dockerfile: Dockerfile
     restart: always
     environment:
       - API_URL=http://api-service:8000 # update to your actually backend ip
     ports:
       - 4000:3000
+=======
+      dockerfile: prod.Dockerfile
+      # args:
+      #   ENV_VARIABLE: ${ENV_VARIABLE}
+      #   NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    restart: always
+    ports:
+      - 3000:3000
+>>>>>>> 79c707a43b5938e771008cccb4054b8d41dde0b5
 
   backend:
     build:
