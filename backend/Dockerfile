@@ -1,21 +1,13 @@
-# Use the official Python base image
 FROM python:3.12
 
-# Set the working directory inside the container
 WORKDIR /app
 
-# Copy the requirements file to the working directory
 COPY Pipfile .
-
-# install pipenv
 RUN pip install pipenv
-
-# Install the Python dependencies
 RUN pipenv install
 
-# Copy the application code to the working directory
 COPY . .
 
 
-# Run the FastAPI application using uvicorn server
-CMD ["pipenv", "run", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# run the fastapi application using uvicorn server
+CMD ["pipenv", "run", "uvicorn", "uptimemon.main:app", "--host", "0.0.0.0", "--port", "8000"]

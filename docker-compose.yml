@@ -7,6 +7,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     restart: always
+    environment:
+      - API_URL=http://api-service:8000 # update to your actually backend ip
     ports:
       - 4000:3000
 
@@ -15,20 +17,8 @@ services:
       context: ./backend
     ports:
       - "8000:8000"
-    depends_on:
-      - mongodb
     env_file:
       - .env
-    environment:
-      MONGO_URI: "mongodb://mongodb:27017/"
-      MONGO_NAEM: "uptimeMon"
-
-  mongodb:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
 
 volumes:
   mongodb_data:

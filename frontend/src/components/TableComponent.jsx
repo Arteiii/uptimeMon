@@ -1,17 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { AddIPForm } from "./AddIPForm";
 
 import {
   XCircleIcon,
   ArrowPathIcon,
+  TrashIcon,
   ArrowDownTrayIcon,
   ArrowDownOnSquareStackIcon,
   PlusIcon,
-  MagnifyingGlassIcon,
-  AdjustmentsHorizontalIcon,
   ClockIcon,
   CheckCircleIcon,
+  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
 
 import {
@@ -21,19 +22,22 @@ import {
   Button,
   CardBody,
   Chip,
-  CardFooter,
-  Avatar,
   IconButton,
   Tooltip,
-  Input,
 } from "@material-tailwind/react";
 
 const TABLE_HEAD = ["IP Address", "Hostname", "Last Pinged", "Status", ""];
 
 const TABLE_ROWS = [
   {
-    ip: "192.168.1.1",
-    hostname: "router",
+    ip: "192.168.178.58",
+    hostname: "test1",
+    lastPinged: new Date("2023-01-23T12:45:00"),
+    threshold: 500,
+  },
+  {
+    ip: "192.168.178.255",
+    hostname: "test2",
     lastPinged: new Date("2023-01-23T12:45:00"),
     threshold: 500,
   },
@@ -42,61 +46,92 @@ const TABLE_ROWS = [
 export function TableComponent() {
   const [pingStatus, setPingStatus] = useState(TABLE_ROWS);
   const [loading, setLoading] = useState(true);
+  const [addIPFormOpen, setAddIPFormOpen] = useState(false);
+  const [lastActiveStatus, setLastActiveStatus] = useState("Unknown");
+  const [loadingStates, setLoadingStates] = useState(
+    TABLE_ROWS.map(() => true)
+  );
 
-  const updatePingStatus = () => {
+  const apiUrl = process.env.API_URL || "http://localhost:8000";
+
+  const handleClickStatus = async () => {
+    console.log(apiUrl);
     setLoading(true);
 
-    const intervalId = setInterval(() => {
-      const currentTime = new Date();
+    try {
+      const updatedPingStatus = await Promise.all(
+        pingStatus.map(async (row) => {
+          const response = await fetch(`${apiUrl}/ping/${row.ip}`);
+          const data = await response.json();
+          console.log(data);
 
-      const updatedStatus = pingStatus.map((ping) => {
-        const responseTime = Math.floor(Math.random() * 1000);
+          return {
+            ...row,
+            lastPinged: new Date(data.timestamp),
+            status: data.status,
+          };
+        })
+      );
 
-        let status;
-        if (responseTime < ping.threshold) {
-          status = "Online";
-        } else if (responseTime >= ping.threshold) {
-          status = "Exceeded Threshold";
-        } else {
-          status = "Offline";
-        }
-
-        setLoading(false);
-        return {
-          ...ping,
-          lastPinged: currentTime,
-          status,
-        };
-      });
-
-      setPingStatus(updatedStatus);
-      clearInterval(intervalId);
-    }, 2000);
+      setPingStatus(updatedPingStatus);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setLoading(false);
+    }
   };
 
-  const handleClickStatus = () => {
-    updatePingStatus();
+  const handleAddIPClick = () => {
+    setAddIPFormOpen(true);
+  };
+
+  const handleAddIPFormClose = () => {
+    setAddIPFormOpen(false);
+  };
+
+  const handleAddIP = (newIP) => {
+    const isDuplicate = pingStatus.some((item) => item.ip === newIP.ip);
+
+    if (isDuplicate) {
+      console.error(`Duplicate IP: ${newIP.ip}`);
+    } else {
+      setPingStatus((prevPingStatus) => [...prevPingStatus, newIP]);
+    }
+
+    handleAddIPFormClose();
+  };
+  const handleDeleteEntry = (ipToDelete) => {
+    const updatedPingStatus = pingStatus.filter(
+      (item) => item.ip !== ipToDelete
+    );
+    setPingStatus(updatedPingStatus);
   };
 
   useEffect(() => {
-    updatePingStatus();
+    handleClickStatus();
   }, []);
 
   return (
     <Card className="h-full w-full overflow-hidden">
-      {" "}
       <CardHeader floated={false} shadow={false} className="rounded-none">
         <div className="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">
           <div className="flex w-full shrink-0 gap-2 md:w-max">
-            <Button className="flex items-center gap-3" size="sm" color="green">
+            <AddIPForm
+              isOpen={addIPFormOpen}
+              onClose={handleAddIPFormClose}
+              onAddIP={handleAddIP}
+            />
+            <Button
+              className="flex items-center gap-3"
+              size="sm"
+              color="green"
+              onClick={handleAddIPClick}
+            >
               <PlusIcon strokeWidth={2} className="h-4 w-4" /> Add
             </Button>
             <Button className="flex items-center gap-3" size="sm" color="blue">
               <ArrowDownOnSquareStackIcon strokeWidth={2} className="h-4 w-4" />{" "}
               Import
-            </Button>
-            <Button className="flex items-center gap-3" size="sm">
-              <ArrowDownTrayIcon strokeWidth={2} className="h-4 w-4" /> Download
             </Button>
           </div>
         </div>
@@ -105,26 +140,39 @@ export function TableComponent() {
         <div className="overflow-x-hidden overflow-y-auto">
           <table className="w-full table-auto text-left">
             <colgroup>
-              <col className="w-1/4" /> {/* IP Address */}
-              <col className="w-1/4" /> {/* Hostname */}
-              <col className="w-1/4" /> {/* Last Pinged */}
-              <col className="w-1/4" /> {/* Status */}
-              <col className="w-1/4" /> {/* Edit Ping */}
+              <col className="w-1/4" />
+              <col className="w-1/4" />
+              <col className="w-1/4" />
+              <col className="w-1/4" />
+              <col className="w-1/4" />
             </colgroup>
             <thead>
               <tr>
-                {TABLE_HEAD.map((head) => (
+                {TABLE_HEAD.map((head, index) => (
                   <th
                     key={head}
                     className="border-y border-blue-gray-100 bg-blue-gray-50/50 p-4"
+                    onClick={index === 3 ? handleClickStatus : undefined} // Update status when clicking on the "Status" heading
+                    style={index === 3 ? { cursor: "pointer" } : undefined}
                   >
-                    <Typography
-                      variant="small"
-                      color="blue-gray"
-                      className="font-normal leading-none opacity-70"
-                    >
-                      {head}
-                    </Typography>
+                    <div className="flex items-center">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal leading-none opacity-70"
+                      >
+                        {head}
+                      </Typography>
+                      {index === 3 && (
+                        <div className="ml-3">
+                          <ArrowPathIcon
+                            className={`h-4 w-4 transition-transform ${
+                              loading ? "animate-spin" : ""
+                            }`}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </th>
                 ))}
               </tr>
@@ -139,7 +187,6 @@ export function TableComponent() {
                 return (
                   <tr key={ip}>
                     <td className={`${classes} max-w-xs whitespace-nowrap`}>
-                      {/* Add max-w-xs and whitespace-nowrap */}
                       <Typography
                         variant="small"
                         color="blue-gray"
@@ -149,7 +196,6 @@ export function TableComponent() {
                       </Typography>
                     </td>
                     <td className={`${classes} max-w-xs whitespace-nowrap`}>
-                      {/* Add max-w-xs and whitespace-nowrap */}
                       <Typography
                         variant="small"
                         color="blue-gray"
@@ -159,7 +205,6 @@ export function TableComponent() {
                       </Typography>
                     </td>
                     <td className={`${classes} max-w-xs whitespace-nowrap`}>
-                      {/* Add max-w-xs and whitespace-nowrap */}
                       <Typography
                         variant="small"
                         color="blue-gray"
@@ -169,7 +214,6 @@ export function TableComponent() {
                       </Typography>
                     </td>
                     <td className={`${classes} max-w-xs whitespace-nowrap`}>
-                      {/* Add max-w-xs and whitespace-nowrap */}
                       <div className="flex items-center space-x-2">
                         <div className="w-max relative">
                           <Chip
@@ -188,7 +232,6 @@ export function TableComponent() {
                             className={`${loading ? "animate-pulse" : ""} ${
                               status === "Unknown" ? "cursor-pointer" : ""
                             }`}
-                            onClick={() => handleClickStatus()}
                             icon={
                               status === "Online" ? (
                                 <CheckCircleIcon className="h-4 w-4" />
@@ -196,7 +239,9 @@ export function TableComponent() {
                                 <ClockIcon className="h-4 w-4" />
                               ) : status === "Unknown" ? (
                                 loading ? (
-                                  <div className="h-4 w-4 border-t-2 border-blue-gray-500 border-solid rounded-full"></div>
+                                  <div className="h-4 w-4 border-solid rounded-full">
+                                    <QuestionMarkCircleIcon className="h-4 w-4" />
+                                  </div>
                                 ) : (
                                   <div className="animate-pulse">
                                     {lastActiveStatus === "Online" ? (
@@ -218,10 +263,12 @@ export function TableComponent() {
                       </div>
                     </td>
                     <td className={`${classes} max-w-xs whitespace-nowrap`}>
-                      {/* Add max-w-xs and whitespace-nowrap */}
-                      <Tooltip content="Edit Ping">
-                        <IconButton variant="text">
-                          <AdjustmentsHorizontalIcon />
+                      <Tooltip content="Delete Entry">
+                        <IconButton
+                          variant="text"
+                          onClick={() => handleDeleteEntry(ip)}
+                        >
+                          <TrashIcon className="h-5 w-5 text-red-500" />
                         </IconButton>
                       </Tooltip>
                     </td>
@@ -232,37 +279,6 @@ export function TableComponent() {
           </table>
         </div>
       </CardBody>
-      <CardFooter className="flex items-center justify-between border-t border-blue-gray-50 p-4">
-        <Button variant="outlined" size="sm">
-          Previous
-        </Button>
-        <div className="flex items-center gap-2">
-          <IconButton variant="outlined" size="sm">
-            1
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            2
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            3
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            ...
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            8
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            9
-          </IconButton>
-          <IconButton variant="text" size="sm">
-            10
-          </IconButton>
-        </div>
-        <Button variant="outlined" size="sm">
-          Next
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

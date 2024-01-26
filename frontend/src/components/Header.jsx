@@ -30,16 +30,6 @@ export function StickyNavbar() {
         color="blue-gray"
         className="p-1 font-normal"
       >
-        <a href="/jobs" className="flex items-center">
-          Jobs
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="p-1 font-normal"
-      >
         <a href="/" className="flex items-center">
           Ping
         </a>
@@ -58,7 +48,9 @@ export function StickyNavbar() {
               variant="gradient"
               size="sm"
               className="hidden lg:inline-block"
-              onClick={() => window.open("https://github.com/arteiii/uptimemon", "_blank")}
+              onClick={() =>
+                window.open("https://github.com/arteiii/uptimemon", "_blank")
+              }
             >
               <span className="flex items-center">
                 <FaGithub className="mr-1" />

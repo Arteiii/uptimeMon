@@ -10,6 +10,7 @@ motor = "*"
 ping3 = "*"
 httpx = "*"
 python-dotenv = "*"
+asgi-lifespan = "*"
 
 [dev-packages]
 pytest-asyncio = "*"
