@@ -25,6 +25,8 @@ import {
   Tooltip,
 } from "@material-tailwind/react";
 
+const apiUrl = process.env.API_URL;
+
 const TABLE_HEAD = ["IP Address", "Hostname", "Last Pinged", "Status", ""];
 
 const TABLE_ROWS = [
@@ -51,7 +53,6 @@ export function TableComponent() {
     TABLE_ROWS.map(() => true)
   );
 
-  const apiUrl = process.env.API_URL || "http://localhost:8000/env_not_found";
 
   console.log(apiUrl);
 
@@ -109,6 +110,7 @@ export function TableComponent() {
   };
 
   useEffect(() => {
+    console.log(apiUrl)
     handleClickStatus();
   });
 

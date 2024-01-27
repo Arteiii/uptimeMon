@@ -32,6 +32,10 @@ cd uptimeMon
 
 **Note**: Docker Compose is required to run this project. If you don't have Docker Compose installed, you can download it [here](https://docs.docker.com/compose/install/).
 
+
+Before beginning, ensure to configure the address of the API endpoint (the backend application) within the Nextjs config of the frontend (``/frontend/next.config.js``). Set the environment variable ``API_URL`` to match your backend URL.
+
+
 Run Docker Compose
 
 ```bash
