@@ -72,7 +72,7 @@ Once the application is running, you can access the frontend at <http://localhos
 The user interface allows you to specify hosts and view their ping status.
 
 
-<img src="https://i.imgur.com/Vr3OS4n.gif" alt="Test">
+<img src="msedge_GGeywxvEM9.gif" alt="Preview">
 
 ## License
 
